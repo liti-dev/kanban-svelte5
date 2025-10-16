@@ -4,7 +4,7 @@
 </script>
 
 <div class="boards-page">
-	<h1 class="page-title">🎃 Tia's Harvest Boards</h1>
+	<h1 class="page-title">🍂 Tia's Autumn Boards</h1>
 
 	<CreateBoardForm />
 	<BoardsList />
@@ -21,7 +21,6 @@
 		font-size: 2.5rem;
 		font-weight: 800;
 		color: #7b542f;
-		text-align: center;
 		margin-bottom: 2rem;
 		text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.3);
 		letter-spacing: -0.02em;

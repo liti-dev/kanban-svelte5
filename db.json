@@ -68,7 +68,7 @@
     },
     {
       "id": "board-2",
-      "title": "🌽 Fall Farm Operations",
+      "title": "🌽 Farm Operations",
       "columns": [
         {
           "id": "col-5",
@@ -123,6 +123,22 @@
             {
               "id": "card-17",
               "content": "Build scarecrow army - Created 12 scarecrows to protect remaining crops from birds"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "n8rqm9DT_x3q9oHF5L9OA",
+      "title": "test",
+      "columns": [
+        {
+          "id": "n8IBVMNnP_cxJKJZmWHgg",
+          "title": "test",
+          "cards": [
+            {
+              "id": "LCbcu2tPKOhGrpLncN7zm",
+              "content": "test"
             }
           ]
         }

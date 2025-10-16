@@ -58,16 +58,18 @@
 		font-weight: 600;
 		font-size: 1.1rem;
 		position: static;
-		display: block;
+		display: flex;
 		flex: 1;
 		text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.3);
 		letter-spacing: -0.01em;
 		line-height: 1.3;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.board-title {
 		display: block;
-		margin-bottom: 0.5rem;
+		text-align: center;
 	}
 
 	.board-overlay {

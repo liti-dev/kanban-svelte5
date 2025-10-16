@@ -1,10 +1,35 @@
 <script lang="ts">
 	import { getBoardById, createColumn } from '$lib/api/kanban.remote';
 	import Column from '$lib/components/Column.svelte';
+	import { dndzone } from 'svelte-dnd-action';
+	import { flip } from 'svelte/animate';
+	import type { Column as ColumnType } from '$lib/types';
 
 	const { params }: { params: { id: string } } = $props();
-	let board = $derived(await getBoardById({ id: params.id }));
-	let error = $derived(board === null ? new Error('Board not found') : null);
+
+	function handleCardMove(
+		cardId: string,
+		fromColumnId: string,
+		toColumnId: string,
+		newIndex: number
+	) {
+		console.log(`Moving card ${cardId} from ${fromColumnId} to ${toColumnId} at index ${newIndex}`);
+	}
+
+	// Local state for drag operations
+	let dragColumns = $state<ColumnType[]>([]);
+
+	function handleColumnConsider(e: CustomEvent) {
+		dragColumns = e.detail.items;
+	}
+
+	function handleColumnFinalize(e: CustomEvent) {
+		dragColumns = e.detail.items;
+		console.log(
+			'Column order changed:',
+			dragColumns.map((c) => c.title)
+		);
+	}
 </script>
 
 <div class="board-container">
@@ -16,39 +41,49 @@
 			</div>
 		{/snippet}
 
-		{#snippet failed(err: unknown, reset: () => void)}
+		{#snippet failed(error)}
 			<div class="error">
-				<h2>Error Loading Board</h2>
-				<p>{err instanceof Error ? err.message : 'Unknown error occurred'}</p>
-				<button onclick={reset}>Retry</button>
+				<h2>Error</h2>
+				<p>{error instanceof Error ? error.message : 'Failed to load board'}</p>
 			</div>
 		{/snippet}
 
-		{#if error}
-			<div class="error">
-				<h2>Error</h2>
-				<p>{error.message}</p>
-			</div>
-		{:else if board}
+		{@const board = await getBoardById({ id: params.id })}
+		{@const columns = board?.columns?.map((col: ColumnType) => ({ ...col, id: col.id })) ?? []}
+
+		{#if board}
 			<div class="board-header">
 				<h1 class="board-title">{board.title}</h1>
 			</div>
-			<div class="columns-container">
-				{#each board.columns as column (column.id)}
-					<Column boardId={board.id} {column} />
-				{/each}
-				{#if board}
-					<div class="new-column">
-						<form {...createColumn}>
-							<input type="hidden" name="boardId" value={board.id} />
-							<input name="title" placeholder="New column" required />
-							<button type="submit">Add column</button>
-						</form>
+			<div
+				class="columns-container"
+				use:dndzone={{
+					items: dragColumns.length > 0 ? dragColumns : columns,
+					flipDurationMs: 300,
+					dropTargetStyle: {},
+					type: 'columns'
+				}}
+				onconsider={handleColumnConsider}
+				onfinalize={handleColumnFinalize}
+			>
+				{#each dragColumns.length > 0 ? dragColumns : columns as column (column.id)}
+					<div animate:flip={{ duration: 300 }}>
+						<Column boardId={board.id} {column} onCardMove={handleCardMove} />
 					</div>
-				{/if}
+				{/each}
+				<div class="new-column">
+					<form {...createColumn}>
+						<input type="hidden" name="boardId" value={board.id} />
+						<input name="title" placeholder="New column" required />
+						<button type="submit">Add column</button>
+					</form>
+				</div>
 			</div>
 		{:else}
-			<p>Board not found</p>
+			<div class="error">
+				<h2>Board not found</h2>
+				<p>The requested board could not be found.</p>
+			</div>
 		{/if}
 	</svelte:boundary>
 </div>

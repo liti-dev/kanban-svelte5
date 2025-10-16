@@ -56,3 +56,16 @@ export const updateCardSchema = object({
 		minLength(3, 'Card content must be at least 3 characters')
 	)
 });
+
+export const reorderCardsSchema = object({
+	boardId: string(),
+	columnId: string(),
+	newOrder: array(string())
+});
+
+export const moveCardSchema = object({
+	boardId: string(),
+	cardId: string(),
+	toColumnId: string(),
+	newOrder: array(string())
+});

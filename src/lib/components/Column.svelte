@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { createCard, updateColumn, deleteColumn } from '$lib/api/kanban.remote';
 	import Card from './Card.svelte';
+	import { dndzone } from 'svelte-dnd-action';
+	import { flip } from 'svelte/animate';
 
 	interface Props {
 		boardId: string;
@@ -12,12 +14,37 @@
 				content: string;
 			}>;
 		};
+		onCardMove?: (
+			cardId: string,
+			fromColumnId: string,
+			toColumnId: string,
+			newIndex: number
+		) => void;
 	}
 
-	let { boardId, column }: Props = $props();
+	let { boardId, column, onCardMove }: Props = $props();
 
 	let editingColumnId: string | null = $state(null);
 	let editingColumnTitle: string = $state('');
+
+	// Transform cards to include id for dnd-action
+	let items = $derived(column.cards.map((card) => ({ ...card, id: card.id })));
+	let dragItems = $state<any[]>([]);
+
+	function handleDndConsider(e: CustomEvent) {
+		dragItems = e.detail.items;
+	}
+
+	function handleDndFinalize(e: CustomEvent) {
+		dragItems = e.detail.items;
+
+		// Find moved card and notify parent
+		const movedCard = e.detail.info?.id;
+		if (movedCard && onCardMove) {
+			const newIndex = dragItems.findIndex((item) => item.id === movedCard);
+			onCardMove(movedCard, column.id, column.id, newIndex);
+		}
+	}
 
 	function startEditingColumn() {
 		editingColumnId = column.id;
@@ -88,9 +115,20 @@
 		{/if}
 	</div>
 
-	<div class="cards-container">
-		{#each column.cards as card (card.id)}
-			<Card {boardId} columnId={column.id} {card} />
+	<div
+		class="cards-container"
+		use:dndzone={{
+			items: dragItems.length > 0 ? dragItems : items,
+			flipDurationMs: 300,
+			dropTargetStyle: {}
+		}}
+		onconsider={handleDndConsider}
+		onfinalize={handleDndFinalize}
+	>
+		{#each dragItems.length > 0 ? dragItems : items as card (card.id)}
+			<div animate:flip={{ duration: 300 }}>
+				<Card {boardId} columnId={column.id} {card} />
+			</div>
 		{/each}
 	</div>
 
