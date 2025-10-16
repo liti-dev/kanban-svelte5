@@ -1,7 +1,7 @@
 # Kanban Board
 
 A simple Kanban board built with Svelte 5, supporting multiple boards, columns, and cards with drag & drop, validation, and error handling.
-Designed with an Autumn/Halloween 🎃 theme for seasonal fun.
+Designed with an Autumn/Halloween 🎃 theme for seasonal fun. Time spent: 10hrs
 
 https://www.loom.com/share/ddf9467c84684d64be9f5b3f8d9053af?sid=0617f808-8548-4506-be1d-eb753d131f17
 
@@ -39,6 +39,8 @@ npm run dev
 ## Theme: Building secure apps more easily with remote functions and validation
 
 This project demonstrates a modern approach to building secure, type-safe web apps using SvelteKit's remote functions. This pattern eliminates common security vulnerabilities while providing good developer experience.
+
+![security diagram](/flow.png)
 
 ### 1. SvelteKit remote functions
 
@@ -85,19 +87,9 @@ export const createCard = form(cardSchema, async (data) => {
     <input {...createBoard.fields.title.as('text')} placeholder="New board title" required />
 ```
 
-**Validation Layers:**
+**Other validation methods**
 
-- **Schema Validation**: Automatic type and constraint checking
-- **Business Logic Validation**: Custom server-side validation using `invalid()` function
-
-### 4. Secure Data Flow Architecture
-
-```
-Client Form Input → Valibot Schema → Remote Function → Server Logic → Database
-     ↓                    ↓              ↓              ↓
-Type Safety      Validation      Security      Business
-Checking         Enforcement     Boundary      Logic
-```
+- **Business logic**: Custom server-side validation using `invalid()` function
 
 ### Areas for Improvement
 
