@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getBoards } from '$lib/api/kanban.remote';
-	import BoardCard from './BoardCard.svelte';
+	import Board from './Board.svelte';
 </script>
 
 <svelte:boundary>
@@ -21,7 +21,7 @@
 
 	<ul class="boards-container">
 		{#each await getBoards() as board}
-			<BoardCard {board} />
+			<Board {board} />
 		{/each}
 	</ul>
 </svelte:boundary>

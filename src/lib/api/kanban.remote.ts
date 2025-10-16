@@ -1,22 +1,15 @@
 import { query, form, command } from '$app/server';
 import { readDB, writeDB } from './db';
-import { object, string, minLength, pipe, array } from 'valibot';
+import { object, string, array } from 'valibot';
 import { nanoid } from 'nanoid';
-
-const boardSchema = object({
-	title: pipe(string(), minLength(1, 'Title required'))
-});
-
-const columnSchema = object({
-	boardId: string(),
-	title: pipe(string(), minLength(1, 'Title required'))
-});
-
-const cardSchema = object({
-	boardId: string(),
-	columnId: string(),
-	content: pipe(string(), minLength(1, 'Content required'))
-});
+import {
+	boardSchema,
+	columnSchema,
+	cardSchema,
+	updateBoardSchema,
+	updateColumnSchema,
+	updateCardSchema
+} from '../schemas/kanban';
 
 // BOARDS
 export const getBoards = query(async () => {
@@ -29,65 +22,81 @@ export const getBoardById = query(object({ id: string() }), async (params) => {
 	return db.boards.find((b) => b.id === params.id) ?? null;
 });
 
-export const createBoard = form(boardSchema, async (data: { title: string }) => {
+export const createBoard = form(boardSchema, async (data: { title: string }, invalid) => {
 	const db = await readDB();
+
+	// Check if board with same title
+	const existingBoard = db.boards.find((b) => b.title.toLowerCase() === data.title.toLowerCase());
+	if (existingBoard) {
+		invalid(invalid.title('A board with this title already exists'));
+	}
+
 	const newBoard = { id: nanoid(), title: data.title, columns: [] };
 	db.boards.push(newBoard);
 	await writeDB(db);
 	await getBoards().refresh();
+
+	return { success: true, board: newBoard };
 });
 
-export const updateBoardTitle = command(
-	object({ id: string(), title: string() }),
-	async (params) => {
-		const db = await readDB();
-		const board = db.boards.find((b) => b.id === params.id);
-		if (!board) throw new Error('Board not found');
-		board.title = params.title;
-		await writeDB(db);
-		await getBoards().refresh();
-	}
-);
+export const updateBoardTitle = command(updateBoardSchema, async (params) => {
+	const db = await readDB();
+	const board = db.boards.find((b) => b.id === params.id);
+	if (!board) throw new Error('Board not found');
+
+	board.title = params.title;
+	await writeDB(db);
+	await getBoards().refresh();
+	await getBoardById({ id: params.id }).refresh();
+});
 
 export const deleteBoard = command(object({ id: string() }), async (params) => {
 	const db = await readDB();
+	const boardExists = db.boards.some((b) => b.id === params.id);
+	if (!boardExists) throw new Error('Board not found');
+
 	db.boards = db.boards.filter((b) => b.id !== params.id);
 	await writeDB(db);
+
 	await getBoards().refresh();
 });
 
 // COLUMNS
-export const createColumn = form(columnSchema, async (data: { boardId: string; title: string }) => {
-	const db = await readDB();
-	const board = db.boards.find((b) => b.id === data.boardId);
-	if (!board) throw new Error('Board not found');
-
-	const newColumn = { id: nanoid(), title: data.title, cards: [] };
-	board.columns.push(newColumn);
-	await writeDB(db);
-	await getBoardById({ id: data.boardId }).refresh();
-	return newColumn;
-});
-
-export const updateColumn = command(
-	object({
-		boardId: string(),
-		columnId: string(),
-		title: pipe(string(), minLength(1, 'Title required'))
-	}),
-	async (params) => {
+export const createColumn = form(
+	columnSchema,
+	async (data: { boardId: string; title: string }, invalid) => {
 		const db = await readDB();
-		const board = db.boards.find((b) => b.id === params.boardId);
+		const board = db.boards.find((b) => b.id === data.boardId);
 		if (!board) throw new Error('Board not found');
 
-		const column = board.columns.find((c) => c.id === params.columnId);
-		if (!column) throw new Error('Column not found');
+		// Check if column with same title
+		const existingColumn = board.columns.find(
+			(c) => c.title.toLowerCase() === data.title.toLowerCase()
+		);
+		if (existingColumn) {
+			invalid(invalid.title('A column with this title already exists in this board'));
+		}
 
-		column.title = params.title;
+		const newColumn = { id: nanoid(), title: data.title, cards: [] };
+		board.columns.push(newColumn);
 		await writeDB(db);
-		await getBoardById({ id: params.boardId }).refresh();
+		await getBoardById({ id: data.boardId }).refresh();
+		return { success: true, column: newColumn };
 	}
 );
+
+export const updateColumn = command(updateColumnSchema, async (params) => {
+	const db = await readDB();
+	const board = db.boards.find((b) => b.id === params.boardId);
+	if (!board) throw new Error('Board not found');
+
+	const column = board.columns.find((c) => c.id === params.columnId);
+	if (!column) throw new Error('Column not found');
+
+	column.title = params.title;
+	await writeDB(db);
+	await getBoardById({ id: params.boardId }).refresh();
+});
 
 export const deleteColumn = command(
 	object({
@@ -120,33 +129,25 @@ export const createCard = form(
 		column.cards.push(newCard);
 		await writeDB(db);
 		await getBoardById({ id: data.boardId }).refresh();
-		return newCard;
+		return { success: true, card: newCard };
 	}
 );
 
-export const updateCard = command(
-	object({
-		boardId: string(),
-		columnId: string(),
-		cardId: string(),
-		content: pipe(string(), minLength(1, 'Content required'))
-	}),
-	async (params) => {
-		const db = await readDB();
-		const board = db.boards.find((b) => b.id === params.boardId);
-		if (!board) throw new Error('Board not found');
+export const updateCard = command(updateCardSchema, async (params) => {
+	const db = await readDB();
+	const board = db.boards.find((b) => b.id === params.boardId);
+	if (!board) throw new Error('Board not found');
 
-		const column = board.columns.find((c) => c.id === params.columnId);
-		if (!column) throw new Error('Column not found');
+	const column = board.columns.find((c) => c.id === params.columnId);
+	if (!column) throw new Error('Column not found');
 
-		const card = column.cards.find((c) => c.id === params.cardId);
-		if (!card) throw new Error('Card not found');
+	const card = column.cards.find((c) => c.id === params.cardId);
+	if (!card) throw new Error('Card not found');
 
-		card.content = params.content;
-		await writeDB(db);
-		await getBoardById({ id: params.boardId }).refresh();
-	}
-);
+	card.content = params.content;
+	await writeDB(db);
+	await getBoardById({ id: params.boardId }).refresh();
+});
 
 export const deleteCard = command(
 	object({
@@ -167,6 +168,7 @@ export const deleteCard = command(
 		await getBoardById({ id: params.boardId }).refresh();
 	}
 );
+
 // reorder cards within the same column
 export const reorderCards = command(
 	object({

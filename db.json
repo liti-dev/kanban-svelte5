@@ -10,15 +10,15 @@
           "cards": [
             {
               "id": "card-1",
-              "content": "Check pumpkin patch for ripe pumpkins - Walk through the entire patch and mark ready-to-harvest pumpkins"
+              "content": "Check pumpkin patch for ripe pumpkins"
             },
             {
               "id": "card-2",
-              "content": "Prepare harvesting tools - Sharpen knives, clean wheelbarrows, and gather collection baskets"
+              "content": "Prepare harvesting tools"
             },
             {
               "id": "card-3",
-              "content": "Check weather forecast - Ensure dry conditions for optimal harvesting this week"
+              "content": "Ensure dry conditions for optimal harvesting this week"
             }
           ]
         },
@@ -28,11 +28,11 @@
           "cards": [
             {
               "id": "card-4",
-              "content": "Harvest jack-o'-lantern pumpkins - Cut stems 2 inches from pumpkin, handle carefully to avoid bruising"
+              "content": "Harvest pumpkins - Cut stems 2 inches from pumpkin, handle carefully to avoid bruising"
             },
             {
               "id": "card-5",
-              "content": "Sort pumpkins by size - Separate small, medium, and large pumpkins for different markets"
+              "content": "Sort pumpkins by size"
             }
           ]
         },
@@ -42,11 +42,11 @@
           "cards": [
             {
               "id": "card-6",
-              "content": "Clean harvested pumpkins - Remove dirt and debris, inspect for damage or rot"
+              "content": "Clean harvested pumpkins"
             },
             {
               "id": "card-7",
-              "content": "Cure pumpkins in sunlight - Place in sunny area for 10 days to harden skin for storage"
+              "content": "Place in sunny area for 10 days to harden skin for storage"
             }
           ]
         },
@@ -56,11 +56,11 @@
           "cards": [
             {
               "id": "card-8",
-              "content": "Load pumpkins for farmers market - Transport 50 large pumpkins to Saturday market"
+              "content": "Load pumpkins for farmers market"
             },
             {
               "id": "card-9",
-              "content": "Set up Halloween display - Arrange pumpkins with hay bales and corn stalks for spooky effect"
+              "content": "Set up Halloween display"
             }
           ]
         }
