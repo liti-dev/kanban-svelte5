@@ -40,7 +40,7 @@ npm run dev
 
 This project demonstrates a modern approach to building secure, type-safe web apps using SvelteKit's remote functions. This pattern eliminates common security vulnerabilities while providing good developer experience.
 
-![security diagram](/flow.png)
+![security diagram](./flow.png)
 
 ### 1. SvelteKit remote functions
 
