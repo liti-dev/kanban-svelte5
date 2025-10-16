@@ -1,6 +1,6 @@
 import { query, form, command } from '$app/server';
 import { readDB, writeDB } from './db';
-import { object, string, minLength, pipe } from 'valibot';
+import { object, string, minLength, pipe, array } from 'valibot';
 import { nanoid } from 'nanoid';
 
 const boardSchema = object({
@@ -165,5 +165,79 @@ export const deleteCard = command(
 		column.cards = column.cards.filter((c) => c.id !== params.cardId);
 		await writeDB(db);
 		await getBoardById({ id: params.boardId }).refresh();
+	}
+);
+// reorder cards within the same column
+export const reorderCards = command(
+	object({
+		boardId: string(),
+		columnId: string(),
+		newOrder: array(string())
+	}),
+	async (params) => {
+		const { boardId, columnId, newOrder } = params;
+		const db = await readDB();
+		const board = db.boards.find((b) => b.id === boardId);
+		if (!board) throw new Error('Board not found');
+
+		const column = board.columns.find((c) => c.id === columnId);
+		if (!column) throw new Error('Column not found');
+
+		// Reorder cards based on newOrder array
+		const reorderedCards = [];
+		for (const cardId of newOrder) {
+			const card = column.cards.find((c) => c.id === cardId);
+			if (card) reorderedCards.push(card);
+		}
+		column.cards = reorderedCards;
+
+		await writeDB(db);
+		await getBoardById({ id: boardId }).refresh();
+		return column.cards;
+	}
+);
+// move card between columns
+export const moveCard = command(
+	object({
+		boardId: string(),
+		cardId: string(),
+		toColumnId: string(),
+		newOrder: array(string())
+	}),
+	async (params) => {
+		const { boardId, cardId, toColumnId, newOrder } = params;
+		const db = await readDB();
+		const board = db.boards.find((b) => b.id === boardId);
+		if (!board) throw new Error('Board not found');
+
+		// Remove from any column
+		let card;
+		for (const col of board.columns) {
+			const idx = col.cards.findIndex((c) => c.id === cardId);
+			if (idx !== -1) {
+				card = col.cards.splice(idx, 1)[0];
+				break;
+			}
+		}
+		if (!card) throw new Error('Task not found');
+
+		// Add to target column in correct order
+		const targetColumn = board.columns.find((c) => c.id === toColumnId);
+		if (!targetColumn) throw new Error('Column not found');
+
+		// Insert back in the order of newOrder
+		const reorderedCards = [];
+		for (const id of newOrder) {
+			if (id === card.id) reorderedCards.push(card);
+			else {
+				const existing = targetColumn.cards.find((c) => c.id === id);
+				if (existing) reorderedCards.push(existing);
+			}
+		}
+		targetColumn.cards = reorderedCards;
+
+		await writeDB(db);
+		await getBoardById({ id: boardId }).refresh();
+		return targetColumn.cards;
 	}
 );
