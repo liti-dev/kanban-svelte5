@@ -1,0 +1,132 @@
+{
+  "boards": [
+    {
+      "id": "board-1",
+      "title": "🎃 Pumpkin Harvest 2025",
+      "columns": [
+        {
+          "id": "col-1",
+          "title": "🌱 Planning",
+          "cards": [
+            {
+              "id": "card-1",
+              "content": "Check pumpkin patch for ripe pumpkins - Walk through the entire patch and mark ready-to-harvest pumpkins"
+            },
+            {
+              "id": "card-2",
+              "content": "Prepare harvesting tools - Sharpen knives, clean wheelbarrows, and gather collection baskets"
+            },
+            {
+              "id": "card-3",
+              "content": "Check weather forecast - Ensure dry conditions for optimal harvesting this week"
+            }
+          ]
+        },
+        {
+          "id": "col-2",
+          "title": "🚜 In Progress",
+          "cards": [
+            {
+              "id": "card-4",
+              "content": "Harvest jack-o'-lantern pumpkins - Cut stems 2 inches from pumpkin, handle carefully to avoid bruising"
+            },
+            {
+              "id": "card-5",
+              "content": "Sort pumpkins by size - Separate small, medium, and large pumpkins for different markets"
+            }
+          ]
+        },
+        {
+          "id": "col-3",
+          "title": "🧹 Processing",
+          "cards": [
+            {
+              "id": "card-6",
+              "content": "Clean harvested pumpkins - Remove dirt and debris, inspect for damage or rot"
+            },
+            {
+              "id": "card-7",
+              "content": "Cure pumpkins in sunlight - Place in sunny area for 10 days to harden skin for storage"
+            }
+          ]
+        },
+        {
+          "id": "col-4",
+          "title": "🎃 Ready for Halloween",
+          "cards": [
+            {
+              "id": "card-8",
+              "content": "Load pumpkins for farmers market - Transport 50 large pumpkins to Saturday market"
+            },
+            {
+              "id": "card-9",
+              "content": "Set up Halloween display - Arrange pumpkins with hay bales and corn stalks for spooky effect"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "board-2",
+      "title": "🌽 Fall Farm Operations",
+      "columns": [
+        {
+          "id": "col-5",
+          "title": "🗓️ Seasonal Tasks",
+          "cards": [
+            {
+              "id": "card-10",
+              "content": "Plant winter cover crops - Sow rye and clover in harvested fields to prevent soil erosion"
+            },
+            {
+              "id": "card-11",
+              "content": "Prepare corn maze - Trim pathways and add Halloween decorations for October visitors"
+            },
+            {
+              "id": "card-12",
+              "content": "Stock up on apple cider supplies - Order apples, spices, and bottles for cider production"
+            }
+          ]
+        },
+        {
+          "id": "col-6",
+          "title": "🔧 Equipment Maintenance",
+          "cards": [
+            {
+              "id": "card-13",
+              "content": "Service tractor before winter - Change oil, check belts, and winterize engine"
+            },
+            {
+              "id": "card-14",
+              "content": "Repair greenhouse heating system - Fix broken heater before first frost arrives"
+            }
+          ]
+        },
+        {
+          "id": "col-7",
+          "title": "🎪 Halloween Events",
+          "cards": [
+            {
+              "id": "card-15",
+              "content": "Plan haunted hayride route - Map out spooky trail through woods with scary decorations"
+            }
+          ]
+        },
+        {
+          "id": "col-8",
+          "title": "✅ Completed",
+          "cards": [
+            {
+              "id": "card-16",
+              "content": "Harvest sweet corn crop - Successfully harvested 200 dozen ears for local market"
+            },
+            {
+              "id": "card-17",
+              "content": "Build scarecrow army - Created 12 scarecrows to protect remaining crops from birds"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
